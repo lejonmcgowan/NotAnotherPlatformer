@@ -10,8 +10,15 @@ document.body.appendChild(renderer.domElement);
 //make scene
 var scene = new THREE.Scene();
 //add objects to scene
-var camera = new THREE.OrthographicCamera(-width / 2, width / 2, -height / 2, height / 2, 1, 100);    
-scene.add(camera);
+var camera = new THREE.OrthographicCamera(-width / 2, width / 2, -height / 2, height / 2, 1, 1000);
+camera.rotation.y = 3.14159; //rotate 180 degree to face down the +z axis, a la OpenGL axes
+
+var geometry = new THREE.BoxGeometry( 1, 1, 1 );
+var material = new THREE.MeshBasicMaterial( {color: 0x00ff00} );
+var cube = new THREE.Mesh( geometry, material );
+cube.position.z = 20;
+
+scene.add( cube );
     
 
 var renderScene = function()
