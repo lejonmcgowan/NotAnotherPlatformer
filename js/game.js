@@ -26,7 +26,7 @@ function init() {
 
 	var geometry = new THREE.BoxGeometry( 100, 100, 100);
 	//var material = new THREE.MeshLambertMaterial( { color: 0xffffff, shading: THREE.FlatShading, overdraw: 0.5 } );
-	var material = new THREE.MeshPhongMaterial({color: 0x880000});
+	var material = new THREE.MeshPhongMaterial({color: 0x880000, wireframe: false});
 
 	var cube = new THREE.Mesh( geometry, material );
 
@@ -56,6 +56,10 @@ function init() {
 	directionalLight.position.z = Math.random() - 0.5;
 	directionalLight.position.normalize();
 	scene.add( directionalLight );
+
+	var light = new THREE.PointLight( 0xff0000, 1, 100 );
+	light.position.set( 50, 50, 50 );
+	scene.add( light );
 
 	renderer = new THREE.WebGLRenderer({antialias: true});
 	renderer.setClearColor( 0xf0f0f0 );
