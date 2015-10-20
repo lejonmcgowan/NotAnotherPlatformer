@@ -1,46 +1,84 @@
-var width = window.innerWidth;
-var height = window.innerHeight;
+var container, stats;
+var camera, scene, renderer;
+var width = 640, height = 480;
 
-var renderer = new THREE.WebGLRenderer({ antialias: true });
-renderer.setSize(width, height);
-document.body.appendChild(renderer.domElement);
+init();
+animate();
 
-var scene = new THREE.Scene;
+function init() {
 
-var cubeGeometry = new THREE.CubeGeometry(100, 100, 100);
-var cubeMaterial = new THREE.MeshLambertMaterial({ color: 0x1ec876 });
-var cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
-cube.rotation.y = Math.PI * 45 / 180;
-scene.add(cube);
+	container = document.createElement( 'div' );
+	document.body.appendChild( container );
 
-var camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 10000);
-var testCamera = new THREE.OrthographicCamera(-width / 2, width / 2, -height / 2, 10, 10000);
-camera.position.y = 160;
-camera.position.z = 400;
-camera.lookAt(cube.position);
-//testCamera.lookAt(cube.position);
+	camera = new THREE.OrthographicCamera( -width, width, height, -height, -1000, 2000);
+	camera.position.x = 200;
+	camera.position.y = 100;
+	camera.position.z = 200;
 
-scene.add(testCamera);
+	scene = new THREE.Scene();
 
-var skyboxGeometry = new THREE.CubeGeometry(100, 100, 100);
-var skyboxMaterial = new THREE.MeshBasicMaterial({ color: 0xFF0000, side: THREE.BackSide });
-var skybox = new THREE.Mesh(skyboxGeometry, skyboxMaterial);
+	/*alternative grid?*/
+	var helper = new THREE.GridHelper( 500, 50 );
+	helper.setColors( 0x000000, 0x808080 );
+	scene.add( helper );
 
-scene.add(skybox);
+	// Cube in random grid spot. OO this entire setup later
 
-var pointLight = new THREE.PointLight(0xffffff);
-pointLight.position.set(0, 300, 200);
+	var geometry = new THREE.BoxGeometry( 100, 100, 100);
+	//var material = new THREE.MeshLambertMaterial( { color: 0xffffff, shading: THREE.FlatShading, overdraw: 0.5 } );
+	var material = new THREE.MeshPhongMaterial({color: 0x880000});
 
-scene.add(pointLight);
+	var cube = new THREE.Mesh( geometry, material );
 
-var clock = new THREE.Clock;
+	//cube.scale.y = Math.floor( Math.random() * 2 + 1 );
 
-function render() {
-	requestAnimationFrame(render);
-	
-	cube.rotation.y -= clock.getDelta();
-	
-	renderer.render(scene, testCamera);
+	cube.position.x = Math.floor( ( Math.random() * 1000 - 500 ) / 50 ) * 50;
+	cube.position.y = ( cube.scale.y * 50 ) / 2 + 25;
+	cube.position.z = Math.floor( ( Math.random() * 1000 - 500 ) / 50 ) * 50;
+
+	scene.add( cube );
+
+	// Lights
+
+	var ambientLight = new THREE.AmbientLight(0xFFFFFF);
+	scene.add( ambientLight );
+
+	var directionalLight = new THREE.DirectionalLight( Math.random() * 0xffffff );
+	directionalLight.position.x = Math.random() - 0.5;
+	directionalLight.position.y = Math.random() - 0.5;
+	directionalLight.position.z = Math.random() - 0.5;
+	directionalLight.position.normalize();
+	scene.add( directionalLight );
+
+	var directionalLight = new THREE.DirectionalLight( Math.random() * 0xffffff );
+	directionalLight.position.x = Math.random() - 0.5;
+	directionalLight.position.y = Math.random() - 0.5;
+	directionalLight.position.z = Math.random() - 0.5;
+	directionalLight.position.normalize();
+	scene.add( directionalLight );
+
+	renderer = new THREE.WebGLRenderer({antialias: true});
+	renderer.setClearColor( 0xf0f0f0 );
+	//renderer.setPixelRatio( window.devicePixelRatio );
+	renderer.setSize(width, height);
+	container.appendChild( renderer.domElement );
 }
 
-render();
+function animate() {
+
+	requestAnimationFrame( animate );
+
+	render();
+}
+
+function render() {
+
+	var timer = Date.now() * 0.0002;
+	//change to manual control for later
+	camera.position.x = Math.cos( timer ) * 200;
+	camera.position.z = Math.sin( timer ) * 200;
+	camera.lookAt( scene.position );
+
+	renderer.render( scene, camera );
+
+}
